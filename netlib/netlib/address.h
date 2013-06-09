@@ -10,6 +10,8 @@
 struct SocketType;
 class AddressList;
 
+// An address in some domain
+// Usually AF_INET or AF_INET6
 class Address
 {
 public:
@@ -22,18 +24,24 @@ public:
 	Address& operator=(Address a);
 	~Address();
 
+	// Accessors
 	int get_address_family() const { return m_addr->sa_family; }
 	struct sockaddr *get_ptr() const { return m_addr; }
 	int get_len() const { return m_addr_len; }
 
+	// Sorted by the length first and then bitwise address struct comparison
 	bool operator<(const Address& rhs);
 
+	// Query addresses by host name (equivalent to `getaddrinfo`)
 	static AddressList find_by_name(const char* name, const char *port);
 	static AddressList find_by_name(const char* name, const char *port,
 		const SocketType& type, int af=AF_UNSPEC);
 
 private:
+	// Pointer to the low-level representation of the address (sized `m_addr_len`)
 	struct sockaddr *m_addr;
+
+	// Length of the internal address representation
 	int m_addr_len;
 };
 std::ostream& operator<<(std::ostream& lhs, const Address& rhs);

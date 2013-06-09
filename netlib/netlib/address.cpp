@@ -85,6 +85,7 @@ AddressList Address::find_by_name(const char *name, const char *port,
 
 std::ostream& operator<<(std::ostream& lhs, const Address& rhs)
 {
+	// Try to print the address (fall back to <af> format)
 	if (rhs.get_address_family() == AF_INET) {
 		char buffer[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, (void*)&((const sockaddr_in*)rhs.get_ptr())->sin_addr, buffer, sizeof(buffer));
