@@ -6,6 +6,7 @@
 #include <iterator>
 #include <iosfwd>
 #include <utility>
+#include <cstdint>
 
 struct SocketType;
 class AddressList;
@@ -15,7 +16,11 @@ class AddressList;
 class Address
 {
 public:
-	Address(struct sockaddr* addr, int len);
+	// Create an address with no value
+	explicit Address(int len);
+
+	// Create an address by copying a value
+	Address(const struct sockaddr* addr, int len);
 
 	// Default constructible, Copyable, movable
 	Address();
@@ -28,14 +33,25 @@ public:
 	int get_address_family() const { return m_addr->sa_family; }
 	struct sockaddr *get_ptr() const { return m_addr; }
 	int get_len() const { return m_addr_len; }
+	int *get_len_ptr() { return &m_addr_len; }
 
 	// Sorted by the length first and then bitwise address struct comparison
-	bool operator<(const Address& rhs);
+	bool operator<(const Address& rhs) const;
 
 	// Query addresses by host name (equivalent to `getaddrinfo`)
+	// name: host name
+	// port: port number or symbolic port value (eg. http)
+	// type (hint): Socket type of the searched address
+	// af (hint): Address family of the searched address
 	static AddressList find_by_name(const char* name, const char *port);
 	static AddressList find_by_name(const char* name, const char *port,
 		const SocketType& type, int af=AF_UNSPEC);
+
+	// Any ipv4 address (optionally with specified port)
+	static Address inet_any(uint16_t port=0);
+
+	// Any ipv6 address (optionally with specified port)
+	static Address inet6_any(uint16_t port=0);
 
 private:
 	// Pointer to the low-level representation of the address (sized `m_addr_len`)

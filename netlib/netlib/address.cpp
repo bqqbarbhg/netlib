@@ -7,27 +7,34 @@
 #include <utility>
 #include <ostream>
 
-Address::Address(struct sockaddr* addr, int len)
-	: m_addr((struct sockaddr*)malloc(len))
-	, m_addr_len(len)
-{
-	memcpy(m_addr, addr, m_addr_len);
-}
-
 Address::Address()
 	: m_addr(nullptr)
 {
+}
+Address::Address(int len)
+	: m_addr((struct sockaddr*)malloc(len))
+	, m_addr_len(len)
+{
+}
+Address::Address(const struct sockaddr* addr, int len)
+	: m_addr((struct sockaddr*)malloc(len))
+	, m_addr_len(len)
+{
+	// Copy the address representation
+	memcpy(m_addr, addr, m_addr_len);
 }
 Address::Address(const Address& a)
 	: m_addr((struct sockaddr*)malloc(a.m_addr_len))
 	, m_addr_len(a.m_addr_len)
 {
+	// Copy the address representation
 	memcpy(m_addr, a.m_addr, m_addr_len);
 }
 Address::Address(Address&& a)
 	: m_addr(a.m_addr)
 	, m_addr_len(a.m_addr_len)
 {
+	// Mark the moved resource as null
 	a.m_addr = nullptr;
 }
 Address& Address::operator=(Address a)
@@ -41,7 +48,27 @@ Address::~Address()
 	free(m_addr);
 }
 
-bool Address::operator<(const Address& rhs)
+Address Address::inet_any(uint16_t port)
+{
+	Address addr(sizeof(sockaddr_in));
+	sockaddr_in* p = (sockaddr_in*)addr.get_ptr();
+	p->sin_family = AF_INET;
+	p->sin_port = htons(port);
+	p->sin_addr.S_un.S_addr = INADDR_ANY;
+	return addr;
+}
+
+Address Address::inet6_any(uint16_t port)
+{
+	Address addr(sizeof(sockaddr_in6));
+	sockaddr_in6* p = (sockaddr_in6*)addr.get_ptr();
+	p->sin6_family = AF_INET6;
+	p->sin6_port = htons(port);
+	p->sin6_addr = in6addr_any;
+	return addr;
+}
+
+bool Address::operator<(const Address& rhs) const
 {
 	if (m_addr_len < rhs.m_addr_len)
 		return true;

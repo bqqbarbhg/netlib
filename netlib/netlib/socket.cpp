@@ -1,4 +1,5 @@
 #include "socket.h"
+#include "address.h"
 #include <utility>
 
 SocketType::SocketType(int type, int protocol)
@@ -16,9 +17,27 @@ Socket::Socket()
 {
 }
 
+Socket::Socket(socket_handle_t fd)
+	: m_socket(fd)
+{
+}
+
+Socket::Socket(int af, const SocketType& type)
+	: m_socket(::socket(af, type.type, type.protocol))
+{
+}
+
+Socket::Socket(const Address& addr, const SocketType& type)
+	: m_socket(::socket(addr.get_address_family(), type.type, type.protocol))
+{
+	if (!bind(addr))
+		close();
+}
+
 Socket::Socket(Socket&& s)
 	: m_socket(s.m_socket)
 {
+	// Invalidate the moved resource
 	s.m_socket = NETLIB_INVALID_SOCKET;
 }
 
@@ -30,11 +49,60 @@ Socket& Socket::operator=(Socket s)
 
 Socket::~Socket()
 {
+	close();
+}
+
+void Socket::close()
+{
+	if (is_open()) {
 #if NETLIB_PLATFORM == NETLIB_PLATFORM_WINDOWS
-	if (m_socket != INVALID_SOCKET)
 		closesocket(m_socket);
 #else
-	if (m_socket < 0)
 		close(m_socket);
 #endif
+	}
+}
+
+bool Socket::is_open() const
+{
+#if NETLIB_PLATFORM == NETLIB_PLATFORM_WINDOWS
+	return m_socket != INVALID_SOCKET;
+#else
+	return m_socket >= 0;
+#endif
+}
+
+bool Socket::bind(const Address& addr)
+{
+	return ::bind(m_socket, addr.get_ptr(), addr.get_len()) >= 0;
+}
+
+bool Socket::connect(const Address& addr)
+{
+	return ::connect(m_socket, addr.get_ptr(), addr.get_len()) >= 0;
+}
+
+bool Socket::listen(int backlog)
+{
+	return ::listen(m_socket, backlog) >= 0;
+}
+
+Socket Socket::accept()
+{
+	return Socket(::accept(m_socket, nullptr, nullptr));
+}
+
+Socket Socket::accept(Address& addr)
+{
+	return Socket(::accept(m_socket, addr.get_ptr(), addr.get_len_ptr()));
+}
+
+int Socket::receive(char *dest, int length, int flags)
+{
+	return ::recv(m_socket, dest, length, flags);
+}
+
+int Socket::send(const char *src, int length, int flags)
+{
+	return ::send(m_socket, src, length, flags);
 }
