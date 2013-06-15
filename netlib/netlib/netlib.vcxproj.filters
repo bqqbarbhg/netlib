@@ -24,6 +24,9 @@
     <ClInclude Include="address.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="serialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="socket.cpp">
@@ -38,5 +41,13 @@
     <ClCompile Include="net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="serialization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="serialization_basic.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

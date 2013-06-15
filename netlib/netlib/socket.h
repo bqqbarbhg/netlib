@@ -62,24 +62,32 @@ public:
 	// Starts listening for connections to the socket
 	bool listen(int backlog=SOMAXCONN);
 
+	// Set the socket as blocking (default true)
+	bool set_blocking(bool blocking);
+
 	// Accepts a client (should be called after `listen`)
 	Socket accept();
 
 	// Accepts a client (should be called after `listen`)
 	// Stores the address of the sender to out_addr (must be large enough to
 	// hold the address)
-	Socket accept(Address &out_addr);
+	Socket accept(Address& out_addr);
 
 	// Receive data from the socket to `dest`
 	// `dest` should be at least `length` bytes long
 	// returns the number of bytes received
 	int receive(char *dest, int length, int flags=0);
+	// Store the sender to `from` (`from` must be large enough to hold the
+	// address)
+	int receive_from(Address& from, char *dest, int length, int flags=0);
 
 	// Send data from the socket
 	// `src` should contain `length` bytes to send
 	// returns the number of bytes sent
 	int send(const char *src, int length, int flags=0);
-
+	// Send the packet to the address `to`
+	int send_to(const Address& to, const char *src, int length, int flags=0);
+	
 private:
 	// Disable copying
 	Socket(const Socket&);

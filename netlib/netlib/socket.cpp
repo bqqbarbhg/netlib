@@ -87,6 +87,16 @@ bool Socket::listen(int backlog)
 	return ::listen(m_socket, backlog) >= 0;
 }
 
+bool Socket::set_blocking(bool blocking)
+{
+#if NETLIB_PLATFORM == NETLIB_PLATFORM_WINDOWS
+	DWORD dw = blocking ? 0 : 1;
+	return ioctlsocket(m_socket, FIONBIO, &dw) != 0;
+#else
+	return fcntl(handle, F_SETFL, O_NONBLOCK, blocking ? 0 : 1) < 0;
+#endif
+}
+
 Socket Socket::accept()
 {
 	return Socket(::accept(m_socket, nullptr, nullptr));
@@ -102,7 +112,17 @@ int Socket::receive(char *dest, int length, int flags)
 	return ::recv(m_socket, dest, length, flags);
 }
 
+int Socket::receive_from(Address& from, char *dest, int length, int flags)
+{
+	return ::recvfrom(m_socket, dest, length, flags, from.get_ptr(), from.get_len_ptr());
+}
+
 int Socket::send(const char *src, int length, int flags)
 {
 	return ::send(m_socket, src, length, flags);
+}
+
+int Socket::send_to(const Address& to, const char *src, int length, int flags)
+{
+	return ::sendto(m_socket, src, length, flags, to.get_ptr(), to.get_len());
 }

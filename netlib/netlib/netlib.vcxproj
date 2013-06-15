@@ -67,13 +67,18 @@
   <ItemGroup>
     <ClInclude Include="address.h" />
     <ClInclude Include="net.h" />
+    <ClInclude Include="serialization.h" />
     <ClInclude Include="socket.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="address.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="net.cpp" />
+    <ClCompile Include="serialization.cpp" />
     <ClCompile Include="socket.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="serialization_basic.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
