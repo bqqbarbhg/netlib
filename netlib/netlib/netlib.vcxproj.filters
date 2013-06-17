@@ -15,16 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="socket.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="net.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="serialization.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="address.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="serialization.h">
+    <ClInclude Include="net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="socket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,19 +35,16 @@
     <ClCompile Include="address.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="serialization.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="serialization_basic.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
 </Project>

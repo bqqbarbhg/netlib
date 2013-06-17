@@ -5,21 +5,92 @@
 #include <cstring>
 #include <utility>
 
-// Copy `size` bytes from `src` to the buffer
-inline char *net_write(char *p, const char* src, unsigned int size)
+// Read data to network using this class
+// Converts endianness and handles struct packing
+class NetWriter
 {
-	memcpy(p, src, size);
-	p += size;
-	return p;
-}
+public:
+	NetWriter(char *buffer, unsigned int size)
+		: m_buffer(buffer)
+		, m_ptr(buffer)
+		, m_data_left(size)
+	{
+	}
 
-// Read `size` bytes from the buffer to `dst`
-inline const char *net_read(const char *p, char* dst, unsigned int size)
+	template <typename T>
+	bool write(const T& t);
+
+	bool write(const void *source, unsigned int size)
+	{
+		if (m_data_left < size)
+			return false;
+		memcpy(m_ptr, source, size);
+		m_ptr += size;
+		m_data_left -= size;
+		return true;
+	}
+
+	// Advance the buffer `count` elements of T and return the pointer to
+	// the start of that block
+	template <typename T>
+	inline T* write_ptr(unsigned int count=1) {
+		unsigned int size = sizeof(T) * count;
+		if (m_data_left < size)
+			return nullptr;
+		T *ret = reinterpret_cast<T*>(m_ptr);
+		m_ptr += size;
+		m_data_left -= size;
+		return ret;
+	}
+private:
+	char *m_buffer;
+	char *m_ptr;
+	unsigned int m_data_left;
+};
+
+// Read data from network using this class
+// Converts endianness and handles struct packing
+class NetReader
 {
-	memcpy(dst, p, size);
-	p += size;
-	return p;
-}
+public:
+	NetReader(const char *buffer, unsigned int size)
+		: m_buffer(buffer)
+		, m_ptr(buffer)
+		, m_data_left(size)
+	{
+	}
+
+	template <typename T>
+	bool read(T& t);
+
+	bool read(void *target, unsigned int size)
+	{
+		if (m_data_left < size)
+			return false;
+		memcpy(target, m_ptr, size);
+		m_ptr += size;
+		m_data_left -= size;
+		return true;
+	}
+
+	// Advance the buffer `count` elements of T and return the pointer to
+	// the start of that block
+	template <typename T>
+	inline const T* read_ptr(unsigned int count=1) {
+		unsigned int size = sizeof(T) * count;
+		if (m_data_left < size)
+			return nullptr;
+		const T *ret = reinterpret_cast<const T*>(m_ptr);
+		m_ptr += size;
+		m_data_left -= size;
+		return ret;
+	}
+
+private:
+	const char *m_buffer;
+	const char *m_ptr;
+	unsigned int m_data_left;
+};
 
 // Serialization helpers for endian-dependent types
 // hton: Convert a value from host to network byte order
