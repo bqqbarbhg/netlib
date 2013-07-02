@@ -91,7 +91,7 @@ bool Socket::set_blocking(bool blocking)
 {
 #if NETLIB_PLATFORM == NETLIB_PLATFORM_WINDOWS
 	DWORD dw = blocking ? 0 : 1;
-	return ioctlsocket(m_socket, FIONBIO, &dw) != 0;
+	return ioctlsocket(m_socket, FIONBIO, &dw) == 0;
 #else
 	return fcntl(handle, F_SETFL, O_NONBLOCK, blocking ? 0 : 1) < 0;
 #endif
