@@ -42,6 +42,14 @@ public:
 		m_data_left -= size;
 		return ret;
 	}
+
+	// Returns the buffer
+	inline char* data() { return m_buffer; }
+	inline const char* data() const { return m_buffer; }
+
+	// How many bytes have been written
+	inline unsigned int write_amount() const { return m_ptr - m_buffer; }
+
 private:
 	char *m_buffer;
 	char *m_ptr;
@@ -85,6 +93,12 @@ public:
 		m_data_left -= size;
 		return ret;
 	}
+
+	// Returns the buffer
+	inline const char* data() const { return m_buffer; }
+
+	// Returns the number of bytes read
+	inline unsigned int read_amount() const { return m_ptr - m_buffer; }
 
 private:
 	const char *m_buffer;
