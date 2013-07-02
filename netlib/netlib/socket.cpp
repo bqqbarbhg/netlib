@@ -30,7 +30,7 @@ Socket::Socket(int af, const SocketType& type)
 Socket::Socket(const Address& addr, const SocketType& type)
 	: m_socket(::socket(addr.get_address_family(), type.type, type.protocol))
 {
-	if (!bind(addr))
+	if (bind(addr) < 0)
 		close();
 }
 
@@ -74,17 +74,17 @@ bool Socket::is_open() const
 
 int Socket::bind(const Address& addr)
 {
-	return ::bind(m_socket, addr.get_ptr(), addr.get_len()) >= 0;
+	return ::bind(m_socket, addr.get_ptr(), addr.get_len());
 }
 
 int Socket::connect(const Address& addr)
 {
-	return ::connect(m_socket, addr.get_ptr(), addr.get_len()) >= 0;
+	return ::connect(m_socket, addr.get_ptr(), addr.get_len());
 }
 
 int Socket::listen(int backlog)
 {
-	return ::listen(m_socket, backlog) >= 0;
+	return ::listen(m_socket, backlog);
 }
 
 int Socket::set_blocking(bool blocking)
