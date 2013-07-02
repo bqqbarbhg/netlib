@@ -19,6 +19,18 @@ typedef SOCKET socket_handle_t;
 
 #endif
 
+class NetServiceHandle
+{
+public:
+	NetServiceHandle();
+	~NetServiceHandle();
+
+private:
+#if NETLIB_PLATFORM == NETLIB_PLATFORM_WINDOWS
+	WSADATA m_wsadata;
+#endif
+};
+
 inline bool netlib_catch_errno(int err)
 {
 	// TEMPTEMP

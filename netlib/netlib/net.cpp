@@ -2,28 +2,22 @@
 
 #if NETLIB_PLATFORM == NETLIB_PLATFORM_WINDOWS
 
-namespace {
-
-// Initialize WSA before the program starts
-class WSAInitializer
+NetServiceHandle::NetServiceHandle()
 {
-public:
-	WSAInitializer();
-	~WSAInitializer();
-	WSADATA data;
-};
-
-WSAInitializer::WSAInitializer()
-{
-	WSAStartup(MAKEWORD(2, 2), &data);
+	WSAStartup(MAKEWORD(2, 2), &m_wsadata);
 }
-WSAInitializer::~WSAInitializer()
+NetServiceHandle::~NetServiceHandle()
 {
 	WSACleanup();
 }
 
-WSAInitializer g_wsainit;
+#else
 
+NetServiceHandle::NetServiceHandle()
+{
+}
+NetServiceHandle::~NetServiceHandle()
+{
 }
 
 #endif
