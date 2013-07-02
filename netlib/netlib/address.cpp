@@ -9,6 +9,7 @@
 
 Address::Address()
 	: m_addr(nullptr)
+	, m_addr_len(0)
 {
 }
 Address::Address(int len)
@@ -24,11 +25,12 @@ Address::Address(const struct sockaddr* addr, int len)
 	memcpy(m_addr, addr, m_addr_len);
 }
 Address::Address(const Address& a)
-	: m_addr((struct sockaddr*)malloc(a.m_addr_len))
+	: m_addr(a.m_addr == nullptr ? nullptr : (struct sockaddr*)malloc(a.m_addr_len))
 	, m_addr_len(a.m_addr_len)
 {
 	// Copy the address representation
-	memcpy(m_addr, a.m_addr, m_addr_len);
+	if (m_addr != nullptr)
+		memcpy(m_addr, a.m_addr, m_addr_len);
 }
 Address::Address(Address&& a)
 	: m_addr(a.m_addr)
