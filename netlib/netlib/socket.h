@@ -54,16 +54,16 @@ public:
 	bool is_open() const;
 
 	// Bind the socket to address `addr`
-	bool bind(const Address& addr);
+	int bind(const Address& addr);
 
 	// Connects the socket to the address `addr`
-	bool connect(const Address& addr);
+	int connect(const Address& addr);
 
 	// Starts listening for connections to the socket
-	bool listen(int backlog=SOMAXCONN);
+	int listen(int backlog=SOMAXCONN);
 
 	// Set the socket as blocking (default true)
-	bool set_blocking(bool blocking);
+	int set_blocking(bool blocking);
 
 	// Accepts a client (should be called after `listen`)
 	Socket accept();

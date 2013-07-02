@@ -72,28 +72,28 @@ bool Socket::is_open() const
 #endif
 }
 
-bool Socket::bind(const Address& addr)
+int Socket::bind(const Address& addr)
 {
 	return ::bind(m_socket, addr.get_ptr(), addr.get_len()) >= 0;
 }
 
-bool Socket::connect(const Address& addr)
+int Socket::connect(const Address& addr)
 {
 	return ::connect(m_socket, addr.get_ptr(), addr.get_len()) >= 0;
 }
 
-bool Socket::listen(int backlog)
+int Socket::listen(int backlog)
 {
 	return ::listen(m_socket, backlog) >= 0;
 }
 
-bool Socket::set_blocking(bool blocking)
+int Socket::set_blocking(bool blocking)
 {
 #if NETLIB_PLATFORM == NETLIB_PLATFORM_WINDOWS
 	DWORD dw = blocking ? 0 : 1;
-	return ioctlsocket(m_socket, FIONBIO, &dw) == 0;
+	return ioctlsocket(m_socket, FIONBIO, &dw);
 #else
-	return fcntl(handle, F_SETFL, O_NONBLOCK, blocking ? 0 : 1) < 0;
+	return fcntl(handle, F_SETFL, O_NONBLOCK, blocking ? 0 : 1);
 #endif
 }
 
