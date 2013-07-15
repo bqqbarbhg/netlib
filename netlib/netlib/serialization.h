@@ -50,6 +50,14 @@ public:
 	// How many bytes have been written
 	inline unsigned int write_amount() const { return m_ptr - m_buffer; }
 
+	// Advance `amount` bytes
+	inline bool advance(unsigned int amount) {
+		if (amount > m_data_left)
+			return false;
+		m_data_left -= amount;
+		m_ptr += amount;
+	}
+
 private:
 	char *m_buffer;
 	char *m_ptr;
@@ -99,6 +107,14 @@ public:
 
 	// Returns the number of bytes read
 	inline unsigned int read_amount() const { return m_ptr - m_buffer; }
+
+	// Advance `amount` bytes
+	inline bool advance(unsigned int amount) {
+		if (amount > m_data_left)
+			return false;
+		m_data_left -= amount;
+		m_ptr += amount;
+	}
 
 private:
 	const char *m_buffer;
