@@ -56,6 +56,7 @@ public:
 			return false;
 		m_data_left -= amount;
 		m_ptr += amount;
+
 	}
 
 private:
@@ -114,6 +115,7 @@ public:
 			return false;
 		m_data_left -= amount;
 		m_ptr += amount;
+		return true;
 	}
 
 private:
